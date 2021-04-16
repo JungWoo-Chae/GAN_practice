@@ -1,17 +1,35 @@
 import argparse
 import logging
 import os
-import tensorflow as tf
-from tensorflow.keras.datasets import mnist
-
-from datasets.main import load_dataset 
-from utils import load_yaml, set_memory_growth
-from deepsad import DeepSAD
+import torch
+from datasets.main import get_data_loader 
+from utils import load_yaml
+from adagan import ADAGAN
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg_path', type=str, default='./configs/deep_sad_mnist.yaml', help='config_path')
+#     parser.add_argument('--cfg_path', type=str, default='./configs/ada_dcgan_cifar10.yaml', help='config_path')
+    
+    #dataset
+    parser.add_argument('--dataset', type=str, default='cifar10', help='dataset')
+    parser.add_argument('--image_size', type=int, default=64, help='Use image_size to decide number of layers in the arch.')
+    
+    parser.add_argument('--arch', type=str, default='dcgan', help='architecture')
+    
+    
+    parser.add_argument('--ckpt_every', type=int, default=1000, help='ckpt_every')
+    parser.add_argument('--sample_every', type=int, default=5000, help='sample_every')
+    parser.add_argument('--eval_every', type=int, default=1000, help='eval_every')
+    parser.add_argument('--print_every', type=int, default=1000, help='print_every')
+    
+    #train
+    parser.add_argument('--lr', type=float, default=2e-4, help='learning rate')
+    parser.add_argument('--epochs', type=int, default=10, help='print_every')
+    parser.add_argument('--batch_size', type=int, default=64, help='batch_size')
+    parser.add_argument('--advloss', type=str, default='vanilla', help='adversarial loss')
+    parser.add_argument('--reg', type=str, default=None, help='regressor')
+    
     
     return parser.parse_args()
     
@@ -20,34 +38,19 @@ def main():
     args = parse_args()
     
     # Get configuration
-    cfg = load_yaml(args.cfg_path)
-    
-    # Set up log
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-    set_memory_growth()    
-    
-    logger = tf.get_logger()
-    logger.disabled = True
-    logger.setLevel(logging.FATAL)
-    
+#     cfg = load_yaml(args.cfg_path)
+        
     # define network 
-    model = DeepSAD(cfg)
+#     model = ADAGAN(cfg)
+    model = ADAGAN(args)
     model.build_model()
     
     # load train & test set
-    train_dataset, test_dataset = load_dataset(cfg)
-    
-    # pretrain
-    if cfg['pretrain']:
-        model.pretrain(train_dataset, cfg['ae_lr'], cfg['ae_epochs'])
-    
+    dataloader = get_data_loader(args)
+   
     # train 
-    model.train(train_dataset, cfg['lr'], cfg['epochs'])
+    model.train(dataloader, args)
     
-    # test
-    model.test(test_dataset)
-    
-
 
 if __name__ == '__main__':
     main()
