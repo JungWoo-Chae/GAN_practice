@@ -17,7 +17,6 @@ def parse_args():
     
     parser.add_argument('--arch', type=str, default='dcgan', help='architecture')
     
-    
     parser.add_argument('--ckpt_every', type=int, default=1000, help='ckpt_every')
     parser.add_argument('--sample_every', type=int, default=5000, help='sample_every')
     parser.add_argument('--eval_every', type=int, default=1000, help='eval_every')
@@ -25,7 +24,7 @@ def parse_args():
     
     #train
     parser.add_argument('--lr', type=float, default=2e-4, help='learning rate')
-    parser.add_argument('--epochs', type=int, default=10, help='print_every')
+    parser.add_argument('--epochs', type=int, default=20, help='print_every')
     parser.add_argument('--batch_size', type=int, default=64, help='batch_size')
     parser.add_argument('--advloss', type=str, default='vanilla', help='adversarial loss')
     parser.add_argument('--reg', type=str, default=None, help='regressor')

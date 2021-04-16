@@ -52,8 +52,8 @@ class ADAGAN():
         losses = []
         checkpoints = []
         
-        self.lr = 2e-4 #self.cfg['lr']
-        epochs = 30 # self.cfg['epochs']
+        self.lr = self.args.lr #self.cfg['lr']
+        epochs = self.args.epochs # self.cfg['epochs']
         self.d_optimizer = torch.optim.Adam(self.D.parameters(), lr=self.lr)
         self.g_optimizer = torch.optim.Adam(self.G.parameters(), lr=self.lr)
         
